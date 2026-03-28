@@ -32,7 +32,6 @@ export async function tailorApplication(
   const response = await client.messages.create({
     model: "claude-opus-4-6",
     max_tokens: 16000,
-    thinking: { type: "adaptive" },
     system: SYSTEM_PROMPT,
     messages: [
       {

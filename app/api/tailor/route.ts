@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { extractTextFromPdf } from "@/lib/extract-pdf";
 import { tailorApplication } from "@/lib/tailor-cv";
 
+export const runtime = "nodejs";
+
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
@@ -33,9 +35,10 @@ export async function POST(req: NextRequest) {
     const result = await tailorApplication(extractedCv, jobDescription);
     return NextResponse.json(result);
   } catch (error) {
-    console.error("Tailor API error:", error);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("Tailor API error:", message);
     return NextResponse.json(
-      { error: "Failed to generate application. Please try again." },
+      { error: message },
       { status: 500 }
     );
   }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { CVPreview } from "@/components/CVPreview";
 import { TailoredApplication } from "@/lib/tailor-cv";
 
 interface ResultPreviewProps {
@@ -25,16 +26,34 @@ function CopyButton({ text }: { text: string }) {
       onClick={handleCopy}
       className="text-xs text-muted-foreground hover:text-foreground transition-colors"
     >
-      {copied ? "Copied ✓" : "Copy"}
+      {copied ? "Copied ✓" : "Copy markdown"}
     </button>
   );
 }
 
-function MarkdownPreview({ content }: { content: string }) {
+function DocumentTabs({
+  preview,
+  markdown,
+}: {
+  preview: React.ReactNode;
+  markdown: string;
+}) {
   return (
-    <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-foreground/80 p-6 bg-muted/30 rounded-lg border overflow-auto max-h-[600px]">
-      {content}
-    </pre>
+    <Tabs defaultValue="preview">
+      <div className="flex items-center justify-between mb-3">
+        <TabsList>
+          <TabsTrigger value="preview">Preview</TabsTrigger>
+          <TabsTrigger value="markdown">Markdown</TabsTrigger>
+        </TabsList>
+        <CopyButton text={markdown} />
+      </div>
+      <TabsContent value="preview">{preview}</TabsContent>
+      <TabsContent value="markdown">
+        <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-foreground/80 p-6 bg-muted/30 rounded-lg border overflow-auto max-h-[700px]">
+          {markdown}
+        </pre>
+      </TabsContent>
+    </Tabs>
   );
 }
 
@@ -57,24 +76,26 @@ export function ResultPreview({ result, onReset }: ResultPreviewProps) {
 
       <Tabs defaultValue="cv">
         <TabsList className="w-full">
-          <TabsTrigger value="cv" className="flex-1">Tailored CV</TabsTrigger>
-          <TabsTrigger value="cover" className="flex-1">Cover Letter</TabsTrigger>
+          <TabsTrigger value="cv" className="flex-1">
+            Tailored CV
+          </TabsTrigger>
+          <TabsTrigger value="cover" className="flex-1">
+            Cover Letter
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="cv" className="mt-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">Markdown</span>
-            <CopyButton text={result.tailored_cv} />
-          </div>
-          <MarkdownPreview content={result.tailored_cv} />
+        <TabsContent value="cv" className="mt-4">
+          <DocumentTabs
+            preview={<CVPreview content={result.tailored_cv} />}
+            markdown={result.tailored_cv}
+          />
         </TabsContent>
 
-        <TabsContent value="cover" className="mt-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">Markdown</span>
-            <CopyButton text={result.cover_letter} />
-          </div>
-          <MarkdownPreview content={result.cover_letter} />
+        <TabsContent value="cover" className="mt-4">
+          <DocumentTabs
+            preview={<CVPreview content={result.cover_letter} />}
+            markdown={result.cover_letter}
+          />
         </TabsContent>
       </Tabs>
     </div>

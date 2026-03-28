@@ -88,18 +88,28 @@ Add to `.env.local` — never commit.
 - [x] `components/CVPreview.tsx` — styled blue banner CV renderer
 
 ### Phase 2 — Next Features (priority order)
-- [ ] **PDF export** — download tailored CV + cover letter as styled PDFs
-- [ ] **Auth** — sign in with Google via Clerk
-- [ ] **CV history** — save all generated applications per user (Supabase)
-- [ ] **Style picker** — choose CV template (blue banner, minimal, classic)
-- [ ] **Usage limits + billing** — free tier + Stripe for unlimited access
+- [x] **PDF export** — download tailored CV + cover letter as styled PDFs (Puppeteer)
+- [ ] **CV template picker** — let users choose a template that matches their original CV style
+  - Templates planned: Blue Banner (current), Minimal, Modern, Corporate
+  - Architecture: `lib/templates/` config with React preview component + PDF CSS per template
+  - Template switcher on result page re-renders preview and changes PDF output
+  - Rationale: PDF extraction strips all visual styling so we can't auto-detect; picker is the standard industry approach (Zety, CV Genius, Resume.io)
+- [ ] **Auth — Google SSO** — sign in with Google via Clerk
+  - Use Clerk for Next.js (fastest setup, handles sessions, JWTs, middleware)
+  - Protect routes via Clerk middleware
+  - Store Clerk user ID as foreign key in Supabase
+  - Note: foundational for CV history and billing — build before those features
+- [ ] **CV history & dashboard** — save all generated applications per user (Supabase)
+  - Store: user ID, company name, role title, date, tailored CV markdown, cover letter markdown
+  - Dashboard page: list of past applications with re-download option
+- [ ] **Usage limits + billing** — free tier (3 CVs/month) + Stripe for unlimited access
 
 ### Phase 3 — Growth
-- [ ] Application tracker (track job applications with status)
+- [ ] Application tracker (track job applications with status: applied, interview, offer, rejected)
 - [ ] Email delivery of generated documents
 - [ ] iOS app wrapper (Capacitor)
 
 ---
 
 ## Last Updated
-2026-03-28 — Phase 1 complete. Core tailoring flow working end-to-end.
+2026-03-28 — Phase 1 complete + PDF export done. Template picker and Google SSO queued for Phase 2.

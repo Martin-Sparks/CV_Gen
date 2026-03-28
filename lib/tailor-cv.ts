@@ -19,6 +19,18 @@ Rules:
 - Match the seniority level implied by the job description
 - Highlight measurable achievements where possible
 
+PDF extraction artefacts — IMPORTANT:
+- The CV text is extracted from a PDF and may contain spacing artefacts
+- Names and titles may have spaces stripped, e.g. "MARTINSPARKS" instead of "MARTIN SPARKS", or "SoftwareEngineer" instead of "Software Engineer"
+- You MUST correct these artefacts — ensure all names, job titles, company names, and words are properly spaced in your output
+- Use your knowledge of the candidate's details to reconstruct correct spacing where it is clearly missing
+
+Markdown structure for the CV — follow this exact format:
+- Line 1: # Full Name  (the candidate's name — properly spaced, title case)
+- Line 2: ## Job Title  (their current or target role — properly spaced)
+- Line 3: Contact details paragraph (email | phone | location | LinkedIn)
+- Then ## SECTION HEADING sections for Experience, Education, Skills etc.
+
 Respond with valid JSON only, in this exact format:
 {
   "tailored_cv": "...full markdown CV...",

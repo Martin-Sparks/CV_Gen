@@ -58,12 +58,29 @@ export async function tailorApplication(
     throw new Error("No text response from Claude");
   }
 
-  // Strip markdown code fences if Claude wrapped the JSON
-  const raw = textBlock.text.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "").trim();
+  const raw = textBlock.text;
 
+  // Try 1: direct parse
   try {
     return JSON.parse(raw) as TailoredApplication;
-  } catch {
-    throw new Error("Failed to parse Claude response as JSON");
-  }
+  } catch {}
+
+  // Try 2: strip markdown code fences
+  try {
+    const stripped = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
+    return JSON.parse(stripped) as TailoredApplication;
+  } catch {}
+
+  // Try 3: extract the first {...} block (handles preamble/postamble text)
+  try {
+    const start = raw.indexOf("{");
+    const end = raw.lastIndexOf("}");
+    if (start !== -1 && end !== -1 && end > start) {
+      return JSON.parse(raw.slice(start, end + 1)) as TailoredApplication;
+    }
+  } catch {}
+
+  // All attempts failed — log raw response to server terminal for debugging
+  console.error("Claude raw response:\n", raw);
+  throw new Error("Failed to parse Claude response as JSON — check server logs");
 }
